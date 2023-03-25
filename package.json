@@ -5,9 +5,10 @@
     "main": "dist/index.js",
     "type": "module",
     "scripts": {
+        "build": "tsc",
         "watch": "tsc -b -w",
         "dev": "cross-env NODE_ENV=development node .",
-        "start": "tsc && node ."
+        "start": "node ."
     },
     "author": "",
     "license": "MIT",
