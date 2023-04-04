@@ -3,8 +3,8 @@ import { beautiful_wait, ask } from '../utils.js';
 
 export default {
     data: new SlashCommandBuilder()
-        .setName('chat')
-        .setDescription('和chatgpt聊天')
+        .setName('translate')
+        .setDescription('翻译你的内容（暂时别用，还在施工）')
         .addStringOption(option =>
             option.setName('question')
                 .setDescription('The question to ask chatgpt')
@@ -13,7 +13,6 @@ export default {
     async execute(interaction: CommandInteraction) {
 
         const question = (interaction.options.get("question")?.value ?? "") as string
-        const scope_id = `${interaction.guildId ?? "@me"}/${interaction.channelId}/${interaction.user.id}`
 
         const response = await interaction.deferReply();
 
@@ -22,7 +21,7 @@ export default {
         beautiful_wait(response, () => stop)
 
         try {
-            const answer = await ask(question, scope_id)
+            const answer = await ask(question, null)
 
             stop = true
 

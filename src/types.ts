@@ -1,8 +1,13 @@
-import { Collection } from "discord.js"
+import { Collection, ApplicationCommandData } from "discord.js"
+
+export interface Command {
+    data: ApplicationCommandData;
+    scope?: string;
+}
 
 declare module "discord.js"
 {
     interface Client<> {
-        commands: Collection<string, unknown>,
+        commands: Collection<string, Command>,
     }
 }
