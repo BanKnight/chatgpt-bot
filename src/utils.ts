@@ -36,7 +36,7 @@ export async function ask(question: string, scope_id: string, options = {}) {
     const res = await api.sendMessage(question, {
         ...options,
         parentMessageId: last_info?.id,
-        timeoutMs: 60000,
+        timeoutMs: 120000,
     })
 
     if (scope_id) {
