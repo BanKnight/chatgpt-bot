@@ -74,6 +74,7 @@ async function on_dm(message: Message) {
         }, 1000)
 
         answer = await ask(question, scope_id, {
+            name: user.username,
             async onProgress(resp: any) {
                 answer = resp.text
             }
