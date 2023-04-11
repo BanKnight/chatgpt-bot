@@ -1,4 +1,4 @@
-import { Events, Message, ChannelType, AttachmentBuilder, EmbedBuilder } from "discord.js"
+import { Events, Message, ChannelType, AttachmentBuilder, EmbedBuilder, TextBasedChannelFields } from "discord.js"
 import { beautiful_wait, ask } from "../utils.js";
 
 export default {
@@ -21,38 +21,84 @@ export default {
     },
 };
 
+
 async function on_dm(message: Message) {
 
     const user = message.author
     const question = message.content
 
     const scope_id = user.id
+
+    message.channel.sendTyping()
+
     const response = await message.channel.send("Thinking...")
+    const embed = new EmbedBuilder()
 
     let answered = false
-    beautiful_wait(response, () => answered)
+    let start = Date.now()
 
     try {
-        const answer = await ask(question, scope_id)
+
+        embed.setColor(0x00FF00)
+
+        let answer: string = null
+        let working = false
+
+        let timer = setInterval(async () => {
+            if (answered) {
+                clearInterval(timer)
+                return
+            }
+
+            embed.setFooter({ text: `${(Date.now() - start) / 1000} s` })
+
+            if (answer == null || answer.length == 0) {
+                await response.edit({ embeds: [embed] })
+                return
+            }
+
+            if (working) {
+                return
+            }
+
+            message.channel.sendTyping()
+
+            working = true
+
+            if (answer.length <= 1900) {
+                await response.edit({ content: `${answer}\`\`\``, embeds: [embed] })
+            }
+
+            working = false
+
+        }, 1000)
+
+        answer = await ask(question, scope_id, {
+            async onProgress(resp: any) {
+                answer = resp.text
+            }
+        })
 
         answered = true
 
+        embed.setColor(0x0000FF)
+        embed.setFooter({ text: `done:${(Date.now() - start) / 1000} s` })
+
         if (answer.length <= 1900) {
-            await response.edit(answer)
+            await response.edit({ content: answer, embeds: [embed] })
             return
         }
 
+
         const attachment = new AttachmentBuilder(Buffer.from(answer, 'utf-8'), { name: 'response.txt' });
 
-        await response.edit({ files: [attachment] })
+        await response.edit({ files: [attachment], embeds: [embed] })
     }
     catch (e) {
         answered = true
         console.error(e)
 
-        const embed = new EmbedBuilder()
-            .setColor(0xFF0000)
-            .setTitle("Error")
+        embed.setColor(0xFF0000)
             .setDescription(e.toString())
 
         await response.edit({ embeds: [embed] });

@@ -16,34 +16,71 @@ export default {
         const scope_id = `${interaction.guildId ?? "@me"}/${interaction.channelId}/${interaction.user.id}`
 
         const response = await interaction.deferReply();
+        const embed = new EmbedBuilder()
+            .setDescription(`${question} - <@${interaction.user.id}>`)
 
-        let stop = false
-
-        beautiful_wait(response, () => stop)
+        let answered = false
+        let start = Date.now()
 
         try {
-            const answer = await ask(question, scope_id)
 
-            stop = true
+            embed.setColor(0x00FF00)
+
+            let answer: string = null
+            let working = false
+
+            let timer = setInterval(async () => {
+                if (answered) {
+                    clearInterval(timer)
+                    return
+                }
+                embed.setFooter({ text: `${(Date.now() - start) / 1000} s` })
+
+                if (answer == null || answer.length == 0) {
+                    await response.edit({ embeds: [embed] })
+                    return
+                }
+
+                if (working) {
+                    return
+                }
+
+                interaction.channel.sendTyping()
+                working = true
+
+                if (answer.length <= 1900) {
+                    await response.edit({ content: `${answer}\`\`\``, embeds: [embed] })
+                }
+
+                working = false
+
+            }, 1000)
+
+            answer = await ask(question, scope_id, {
+                async onProgress(resp: any) {
+                    answer = resp.text
+                }
+            })
+            answered = true
+
+            embed.setColor(0x0000FF)
+            embed.setFooter({ text: `${(Date.now() - start) / 1000} s` })
 
             if (answer.length <= 1900) {
-                await response.edit(`> **${question}** - <@${interaction.user.id}> \n\n ${answer}`)
+                await response.edit({ content: answer, embeds: [embed] })
                 return
             }
 
             const attachment = new AttachmentBuilder(Buffer.from(answer, 'utf-8'), { name: 'response.txt' });
 
-            await response.edit({ files: [attachment], content: `> **${question}** - <@${interaction.user.id}>` })
+            await response.edit({ files: [attachment], embeds: [embed] })
         }
         catch (e) {
-            stop = true
+            answered = true
             console.error(e)
 
-            const result = `> **${question}** - <@${interaction.user.id}> \n\n ${e}`
-            const embed = new EmbedBuilder()
-                .setColor(0xFF0000)
-                .setTitle("Error")
-                .setDescription(result)
+            embed.setColor(0xFF0000)
+                .setDescription(`${e}`)
 
             await response.edit({ embeds: [embed] });
         }
