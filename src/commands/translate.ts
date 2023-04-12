@@ -10,6 +10,7 @@ export default {
                 .setDescription('The question to ask chatgpt')
                 .setRequired(true)),
     scope: "guild",
+    no_defer: true,
     async execute(interaction: CommandInteraction) {
 
         const question = (interaction.options.get("question")?.value ?? "") as string

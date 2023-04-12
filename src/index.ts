@@ -14,7 +14,6 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildIntegrations,
         GatewayIntentBits.DirectMessages,
-        GatewayIntentBits.DirectMessageTyping,
         GatewayIntentBits.MessageContent
     ],
     partials: [Partials.Channel]

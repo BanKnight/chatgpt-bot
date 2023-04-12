@@ -6,6 +6,7 @@ export default {
         .setName('help')
         .setDescription('打印所有支持的指令'),
     scope: "application",
+    no_defer: true,
     async execute(interaction: CommandInteraction) {
 
         await interaction.deferReply({ ephemeral: true });

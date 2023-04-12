@@ -6,7 +6,7 @@ export default {
     once: true,
     async execute(client: Client) {
 
-        console.log(`Ready! Logged in as ${client.user.tag}`);
+        console.log(`Ready! Logged in as ${client.user.tag}`, (new Date()).toLocaleString());
 
         const exists = await client.application.commands.fetch();
         const current = client.commands
@@ -64,7 +64,6 @@ export default {
             if (total > 0) {
                 console.log(`guild[${serverid}].commands.create(${total})`)
             }
-
         }
     },
 };
