@@ -57,7 +57,6 @@ export default {
             }, 1000)
 
             answer = await ask(question, scope_id, {
-                name: interaction.user.username,
                 async onProgress(resp: any) {
                     answer = resp.text
                 }

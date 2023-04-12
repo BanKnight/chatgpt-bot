@@ -74,7 +74,6 @@ async function on_dm(message: Message) {
         }, 1000)
 
         answer = await ask(question, scope_id, {
-            name: user.username,
             async onProgress(resp: any) {
                 answer = resp.text
             }
@@ -83,7 +82,7 @@ async function on_dm(message: Message) {
         answered = true
 
         embed.setColor(0x0000FF)
-        embed.setFooter({ text: `done:${(Date.now() - start) / 1000} s` })
+        embed.setFooter({ text: `${(Date.now() - start) / 1000} s` })
 
         if (answer.length <= 1900) {
             await response.edit({ content: answer, embeds: [embed] })
