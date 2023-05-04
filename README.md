@@ -3,7 +3,8 @@
 a discord chagpt bot
 
 ## .env.production
-
+copy .env.example as .env.production
+end input your configuraton
 ```yml
 APPLICATION="YOUR-APPLICATION-ID"
 TOKEN="YOUR-BOT-TOKEN"
