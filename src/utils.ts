@@ -144,7 +144,6 @@ export async function discord_ask(channel: TextBasedChannel, userid: string, que
 
         embed.setColor(0xF56C6C)
             .setTitle("报错")
-            .setDescription(`${e}`)
 
         await response.edit({ content: `${e}`, embeds: [embed], components: [row] });
     }
