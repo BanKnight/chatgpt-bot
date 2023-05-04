@@ -60,14 +60,14 @@ export async function discord_ask(channel: TextBasedChannel, userid: string, que
 
     const embed = new EmbedBuilder()
         .setColor(0x909399)
-        .setTitle(question.length >= 250 ? question.slice(0, 250) + "..." : question)
+        .setDescription(question)
 
     const row = new ActionRowBuilder<ButtonBuilder>()
 
     row.addComponents(new ButtonBuilder()
-        .setCustomId(JSON.stringify({ name: "reask", question, user: userid }))
+        .setCustomId(JSON.stringify({ name: "reask", user: userid }))
         .setLabel("再答一次")
-        .setStyle(ButtonStyle.Secondary),
+        .setStyle(ButtonStyle.Primary),
     )
 
     let answered = false
@@ -123,6 +123,12 @@ export async function discord_ask(channel: TextBasedChannel, userid: string, que
         embed.setColor(0x67C23A)
         embed.setFooter({ text: `${(Date.now() - start) / 1000} s` })
 
+        row.addComponents(new ButtonBuilder()
+            .setCustomId(JSON.stringify({ name: "more", user: userid }))
+            .setLabel("更多回答")
+            .setStyle(ButtonStyle.Secondary),
+        )
+
         if (answer.length <= 1900) {
             await response.edit({ content: answer, embeds: [embed], components: [row] });
             return
@@ -137,8 +143,9 @@ export async function discord_ask(channel: TextBasedChannel, userid: string, que
         console.error(e)
 
         embed.setColor(0xF56C6C)
+            .setTitle("报错")
             .setDescription(`${e}`)
 
-        await response.edit({ embeds: [embed], components: [row] });
+        await response.edit({ content: `${e}`, embeds: [embed], components: [row] });
     }
 }

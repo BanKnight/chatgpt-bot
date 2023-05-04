@@ -7,15 +7,25 @@ export default {
         .setDescription('reask your question'),
     async execute(interaction: MessageComponentInteraction, options: Record<string, any>) {
 
-        const question = options.question as string
         const userid = options.user as string
 
-        if (question == null || question.length == 0 || userid == null) {
+        if (userid == null) {
             throw new Error(`question is empty`)
         }
 
         const message = interaction.message
+        const embeds = message.embeds;
 
-        await discord_ask(interaction.channel, options.user, question, message)
+        if (embeds.length == 0) {
+            throw new Error(`question is empty`)
+        }
+
+        const first = embeds[0];
+
+        const question = first.description || first.title || options.question
+        if (question == null) {
+            throw new Error(`question is empty`)
+        }
+        await discord_ask(interaction.channel, userid, question, message)
     },
 };
